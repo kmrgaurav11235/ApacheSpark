@@ -25,6 +25,9 @@ public class Main {
 
         JavaRDD<Double> myRDD = sc.parallelize(inputData);
 
+        final Double result = myRDD.reduce((value1, value2) -> value1 + value2);
+        System.out.println("Sum: " + result);
+
         sc.close();
     }
 }
