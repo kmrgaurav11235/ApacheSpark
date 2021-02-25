@@ -11,22 +11,35 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        List<Double> inputData = new ArrayList<>();
-        inputData.add(3.141);
-        inputData.add(12.678);
-        inputData.add(31.789);
-        inputData.add(45.891);
-        inputData.add(12.441);
+        List<Integer> inputData = new ArrayList<>();
+        inputData.add(3);
+        inputData.add(12);
+        inputData.add(31);
+        inputData.add(45);
+        inputData.add(12);
 
         Logger.getLogger("org.apache").setLevel(Level.WARN);
 
         SparkConf conf = new SparkConf().setAppName("startingSpark").setMaster("local[*]");
         JavaSparkContext sc = new JavaSparkContext(conf);
 
-        JavaRDD<Double> myRDD = sc.parallelize(inputData);
+        JavaRDD<Integer> myRDD = sc.parallelize(inputData);
+        System.out.println("List: " + inputData);
 
-        final Double result = myRDD.reduce((value1, value2) -> value1 + value2);
-        System.out.println("Sum: " + result);
+        // Reduce
+        final Integer result = myRDD.reduce((value1, value2) -> value1 + value2);
+        System.out.println("\nSum: " + result);
+
+        // Map
+        final JavaRDD<Double> sqrtRDD = myRDD.map(value -> Math.sqrt(value));
+
+        System.out.println("\nSquare Roots:");
+        sqrtRDD.foreach(value -> System.out.println(value));
+
+        // Count the number of elements in sqrtRDD using just map and reduce: This is well known pattern
+        final Long count = sqrtRDD.map(value -> 1L)
+                .reduce((value1, value2) -> value1 + value2);
+        System.out.println("\nCount of sqrtRDD:" + count);
 
         sc.close();
     }
