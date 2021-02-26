@@ -1,4 +1,4 @@
-package in.gaurav;
+package in.gaurav.part01basics;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -9,7 +9,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main {
+public class Basics01ReduceAndMap {
     public static void main(String[] args) {
         List<Integer> inputData = new ArrayList<>();
         inputData.add(3);
@@ -34,7 +34,12 @@ public class Main {
         final JavaRDD<Double> sqrtRDD = myRDD.map(value -> Math.sqrt(value));
 
         System.out.println("\nSquare Roots:");
-        sqrtRDD.foreach(value -> System.out.println(value));
+        // Old Style
+        // sqrtRDD.foreach(value -> System.out.println(value));
+
+        // New Style. collect() method is there to prevent NotSerializableException.
+        // This is because System.out.println() method is not serializable.
+        sqrtRDD.collect().forEach(System.out::println);
 
         // Count the number of elements in sqrtRDD using just map and reduce: This is well known pattern
         final Long count = sqrtRDD.map(value -> 1L)
