@@ -27,6 +27,7 @@ public class Basics03PairRDD {
 
         final JavaRDD<String> originalLogMessages = sc.parallelize(inputData);
 
+        /*
         final JavaPairRDD<String, String> pairRDD = originalLogMessages.mapToPair(rawValue -> {
             final String[] columns = rawValue.split(":"); // Separating the Logging Level and the Date
 
@@ -34,7 +35,17 @@ public class Basics03PairRDD {
             final String date = columns[1];
 
             return new Tuple2<>(level, date);
+        });*/
+
+        final JavaPairRDD<String, Long> pairRDD = originalLogMessages.mapToPair(rawValue -> {
+            final String[] columns = rawValue.split(":");
+            String level = columns[0];
+
+            return new Tuple2<>(level, 1L);
         });
+
+        final JavaPairRDD<String, Long> sumRDD = pairRDD.reduceByKey((value1, value2) -> value1 + value2);
+        sumRDD.foreach(tuple -> System.out.println(tuple._1 + " has " + tuple._2 + " instances."));
 
         sc.close();
     }
