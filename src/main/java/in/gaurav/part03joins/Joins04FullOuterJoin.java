@@ -1,16 +1,17 @@
-package in.gaurav.part03intermediate;
+package in.gaurav.part03joins;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.Optional;
 import scala.Tuple2;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Intermediate01InnerJoins {
+public class Joins04FullOuterJoin {
     public static void main(String[] args) {
         Logger.getLogger("org.apache").setLevel(Level.WARN);
 
@@ -33,14 +34,18 @@ public class Intermediate01InnerJoins {
         usersRaw.add(new Tuple2<>(5, "Richard Thornburg"));
         usersRaw.add(new Tuple2<>(6, "Simon Gruber"));
 
-        // Here we use Pair RRDs
         final JavaPairRDD<Integer, Integer> visits = sc.parallelizePairs(visitsRaw);
         final JavaPairRDD<Integer, String> users = sc.parallelizePairs(usersRaw);
 
-        // Inner join: Discard any data that doesn't have a corresponding entry in the other RDD
-        final JavaPairRDD<Integer, Tuple2<Integer, String>> joinedPairRDD = visits.join(users);
+        // Full outer join: All data in both RDDs will be present. So, there is a potential for "empty" on both sides
+        final JavaPairRDD<Integer, Tuple2<Optional<Integer>, Optional<String>>> joinedPairRDD = visits.fullOuterJoin(users);
 
-        joinedPairRDD.collect().forEach(System.out::println);
+        joinedPairRDD.foreach(pairRDD ->
+                System.out.printf("Id: %s, Name: %s, Num Visits: %s%n",
+                        pairRDD._1,
+                        pairRDD._2._2.orElse("Name Unavailable"),
+                        pairRDD._2._1.orElse(0))
+        );
 
         sc.close();
     }

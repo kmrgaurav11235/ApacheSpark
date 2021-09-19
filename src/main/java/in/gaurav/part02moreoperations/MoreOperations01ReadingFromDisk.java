@@ -1,4 +1,4 @@
-package in.gaurav.part02intermediate;
+package in.gaurav.part02moreoperations;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -8,7 +8,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 
 import java.util.Arrays;
 
-public class Intermediate01ReadingFromDisk {
+public class MoreOperations01ReadingFromDisk {
     public static void main(String[] args) {
         Logger.getLogger("org.apache").setLevel(Level.WARN);
 

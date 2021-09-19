@@ -1,17 +1,16 @@
-package in.gaurav.part03intermediate;
+package in.gaurav.part03joins;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.Optional;
 import scala.Tuple2;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Intermediate05Cartesian {
+public class Joins01InnerJoin {
     public static void main(String[] args) {
         Logger.getLogger("org.apache").setLevel(Level.WARN);
 
@@ -34,14 +33,14 @@ public class Intermediate05Cartesian {
         usersRaw.add(new Tuple2<>(5, "Richard Thornburg"));
         usersRaw.add(new Tuple2<>(6, "Simon Gruber"));
 
+        // Here we use Pair RRDs
         final JavaPairRDD<Integer, Integer> visits = sc.parallelizePairs(visitsRaw);
         final JavaPairRDD<Integer, String> users = sc.parallelizePairs(usersRaw);
 
-        // Cartesian join: All pairs (a, b) where 'a' is in 1st RDD and 'b' is in the 2nd RDD. All values are paired-up
-        // in every single possible combination.
-        final JavaPairRDD<Tuple2<Integer, Integer>, Tuple2<Integer, String>> cartesian = visits.cartesian(users);
+        // Inner join: Discard any data that doesn't have a corresponding entry in the other RDD
+        final JavaPairRDD<Integer, Tuple2<Integer, String>> joinedPairRDD = visits.join(users);
 
-        cartesian.collect().forEach(System.out::println);
+        joinedPairRDD.collect().forEach(System.out::println);
 
         sc.close();
     }

@@ -1,4 +1,4 @@
-package in.gaurav.part02intermediate;
+package in.gaurav.part02moreoperations;
 
 import in.gaurav.common.Util;
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +11,7 @@ import scala.Tuple2;
 
 import java.util.Arrays;
 
-public class Intermediate03SortAndCoalesce {
+public class MoreOperations03SortAndCoalesce {
     public static void main(String[] args) {
         Logger.getLogger("org.apache").setLevel(Level.WARN);
 

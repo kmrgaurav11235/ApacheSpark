@@ -1,4 +1,4 @@
-package in.gaurav.part02intermediate;
+package in.gaurav.part02moreoperations;
 
 import in.gaurav.common.Util;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +23,7 @@ import java.util.Arrays;
     have completed.
 */
 
-public class Intermediate04KeywordRankingInSparkCluster {
+public class MoreOperations04KeywordRankingInSparkCluster {
     public static void main(String[] args) {
         Logger.getLogger("org.apache").setLevel(Level.WARN);
 

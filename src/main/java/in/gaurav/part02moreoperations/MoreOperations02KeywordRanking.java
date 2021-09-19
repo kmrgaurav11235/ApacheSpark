@@ -1,4 +1,4 @@
-package in.gaurav.part02intermediate;
+package in.gaurav.part02moreoperations;
 
 import in.gaurav.common.Util;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +17,7 @@ Exclude words -> src/main/resources/subtitles/boringwords.txt
 Make a list of most frequent words from the subtitle file
 */
 
-public class Intermediate02KeywordRanking {
+public class MoreOperations02KeywordRanking {
     public static void main(String[] args) {
         Logger.getLogger("org.apache").setLevel(Level.WARN);
 

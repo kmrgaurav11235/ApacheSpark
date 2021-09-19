@@ -1,4 +1,4 @@
-package in.gaurav.part03intermediate;
+package in.gaurav.part03joins;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -11,7 +11,7 @@ import scala.Tuple2;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Intermediate03RightOuterJoin {
+public class Joins02LeftOuterJoin {
     public static void main(String[] args) {
         Logger.getLogger("org.apache").setLevel(Level.WARN);
 
@@ -37,14 +37,15 @@ public class Intermediate03RightOuterJoin {
         final JavaPairRDD<Integer, Integer> visits = sc.parallelizePairs(visitsRaw);
         final JavaPairRDD<Integer, String> users = sc.parallelizePairs(usersRaw);
 
-        // Right outer join: Discard any data in 1st RDD that doesn't have a corresponding entry in the 2nd RDD
-        final JavaPairRDD<Integer, Tuple2<Optional<Integer>, String>> joinedPairRDD = visits.rightOuterJoin(users);
+        // Left outer join: Discard any data in 2nd RDD that doesn't have a corresponding entry in the first RDD
+        final JavaPairRDD<Integer, Tuple2<Integer, Optional<String>>> joinedPairRDD = visits.leftOuterJoin(users);
+        // Note how the 2nd entry in Tuple2 is an Optional
 
         joinedPairRDD.foreach(pairRDD ->
                 System.out.printf("Id: %s, Name: %s, Num Visits: %s%n",
                         pairRDD._1,
-                        pairRDD._2._2,
-                        pairRDD._2._1.orElse(0))
+                        pairRDD._2._2.orElse("Name Unavailable"),
+                        pairRDD._2._1)
         );
 
         sc.close();
