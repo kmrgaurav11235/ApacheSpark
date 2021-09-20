@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * This class is used to analyse viewing figures.
  */
-public class Exercise01ViewingFigures {
+public class Exercise01Warmup {
     public static void main(String[] args) {
         Logger.getLogger("org.apache").setLevel(Level.WARN);
 
@@ -27,7 +27,12 @@ public class Exercise01ViewingFigures {
         JavaPairRDD<Integer, Integer> chapterData = setUpChapterDataRdd(sc, testMode);
         JavaPairRDD<Integer, String> titlesData = setUpTitlesDataRdd(sc, testMode);
 
-        // TODO - over to you!
+        // Build and RDD containing key of courseId together with the number of chapters in that course
+        chapterData
+                .mapToPair(tuple -> new Tuple2<>(tuple._2, 1))
+                .reduceByKey((val1, val2) -> val1 + val2)
+                .collect()
+                .forEach(System.out::println);
 
         sc.close();
     }
