@@ -18,7 +18,7 @@ public class Exercise02MostPopularCourse {
         JavaSparkContext sc = new JavaSparkContext(conf);
 
         // Use true to use hardcoded data identical to that in the PDF guide.
-        boolean testMode = true;
+        boolean testMode = false;
 
         JavaPairRDD<Integer, Integer> viewData = setUpViewDataRdd(sc, testMode);
         JavaPairRDD<Integer, Integer> chapterData = setUpChapterDataRdd(sc, testMode);
@@ -68,11 +68,40 @@ public class Exercise02MostPopularCourse {
                 courseViewData.join(chapterCountData);
 
         // Step 7: Ratio of course watched
+        // (courseId, ratioOfCourseWatched)
         final JavaPairRDD<Integer, Double> watchedCourseRatioData =
                 courseViewsAndChapterCountData.mapValues(value -> (double) value._1 / value._2);
         // mapValues -> If you are not changing the keys, but only values you can use this.
 
-        watchedCourseRatioData.collect().forEach(System.out::println);
+        // Step 8: Convert ratios to scores based on the business rules provided
+        // (courseId, score)
+        final JavaPairRDD<Integer, Long> scoreData = watchedCourseRatioData.mapValues(value -> {
+            if (value > 0.9) {
+                return 10L;
+            } else if (value > 0.5) {
+                return 4L;
+            } else if (value > 0.25) {
+                return 2L;
+            } else {
+                return 0L;
+            }
+        });
+
+        // Step 9: Get total score
+        // (courseId, totalScore)
+        final JavaPairRDD<Integer, Long> totalScoreData = scoreData.reduceByKey((score1, score2) -> score1 + score2);
+
+        // Step 10: Add Course Title
+        // (courseId, (totalScore, courseTitle))
+        final JavaPairRDD<Integer, Tuple2<Long, String>> totalScoreWithCourseNameData = totalScoreData.join(titlesData);
+
+        // Step 11: Remove courseId and sort by totalScore
+        // (totalScore, courseTitle)
+        final JavaPairRDD<Long, String> popularCourseData = totalScoreWithCourseNameData
+                        .mapToPair(tuple -> new Tuple2<>(tuple._2._1, tuple._2._2))
+                        .sortByKey(false);
+
+        popularCourseData.collect().forEach(System.out::println);
 
         sc.close();
     }
