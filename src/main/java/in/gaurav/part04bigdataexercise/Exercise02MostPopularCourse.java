@@ -52,7 +52,27 @@ public class Exercise02MostPopularCourse {
         // ((userId, courseId), numViews)
         userCourseViewData = userCourseViewData.reduceByKey((views1, views2) -> views1 + views2);
 
-        userCourseViewData.collect().forEach(System.out::println);
+        // Step 5: Drop the userId
+        // (courseId, numViews)
+        final JavaPairRDD<Integer, Long> courseViewData =
+                userCourseViewData.mapToPair(tuple -> new Tuple2<>(tuple._1._2, tuple._2));
+
+        // Step 6: Add the total chapter count in a course
+        // (courseId, numChapters)
+        final JavaPairRDD<Integer, Integer> chapterCountData = chapterData
+                .mapToPair(tuple -> new Tuple2<>(tuple._2, 1))
+                .reduceByKey((val1, val2) -> val1 + val2);
+
+        // (courseId, (numViews, numChapters))
+        final JavaPairRDD<Integer, Tuple2<Long, Integer>> courseViewsAndChapterCountData =
+                courseViewData.join(chapterCountData);
+
+        // Step 7: Ratio of course watched
+        final JavaPairRDD<Integer, Double> watchedCourseRatioData =
+                courseViewsAndChapterCountData.mapValues(value -> (double) value._1 / value._2);
+        // mapValues -> If you are not changing the keys, but only values you can use this.
+
+        watchedCourseRatioData.collect().forEach(System.out::println);
 
         sc.close();
     }
