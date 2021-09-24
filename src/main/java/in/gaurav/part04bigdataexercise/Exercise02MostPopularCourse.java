@@ -10,7 +10,7 @@ import scala.Tuple2;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Exercise01MostPopularCourse {
+public class Exercise02MostPopularCourse {
     public static void main(String[] args) {
         Logger.getLogger("org.apache").setLevel(Level.WARN);
 
@@ -34,6 +34,25 @@ public class Exercise01MostPopularCourse {
         -> If a user watches > 25% but < 50% it scores 2
         -> Less than 25% is no score
          */
+
+        // Step 1: Remove duplicate views and flip the key and value of
+        viewData = viewData.distinct();
+
+        // Step 2: Join the chapterData with viewData
+        viewData = viewData.mapToPair(tuple -> new Tuple2<>(tuple._2, tuple._1)); //Now it has (chapterId, userId)
+        // (chapterId, (userId, courseId))
+        JavaPairRDD<Integer, Tuple2<Integer, Integer>> joinedRDD = viewData.join(chapterData);
+
+        // Step 3: Drop the chapterId. We now know that every row in the RDD is a distinct chapter in the course.
+        // ((userId, courseId), 1L)
+        JavaPairRDD<Tuple2<Integer, Integer>, Long> userCourseViewData =
+                joinedRDD.mapToPair(tuple -> new Tuple2<>(tuple._2, 1L));
+
+        // Step 4: Count views of (userId, courseId)
+        // ((userId, courseId), numViews)
+        userCourseViewData = userCourseViewData.reduceByKey((views1, views2) -> views1 + views2);
+
+        userCourseViewData.collect().forEach(System.out::println);
 
         sc.close();
     }
