@@ -38,12 +38,11 @@ public class Perf02PartitionTesting {
 		// Now we're going to do a Wide transformation
 		JavaPairRDD<String, Iterable<String>> results = warningsAgainstDate.groupByKey();
 		
-		results = results.persist(StorageLevel.MEMORY_AND_DISK());
 		System.out.println(results.getNumPartitions() + " partitions after the wide transformation");
-		
+
+		// Before this line everything was a "Transformation"; this line is "Action". This will become the job and at
+		// point, the Execution Plan will get executed. We would be able to see this in the Spark UI.
 		results.foreach(it -> System.out.println("key " + it._1 + " has " + Iterables.size(it._2) + " elements"));
-		
-		System.out.println(results.count());
 
 		// This part will wait for user input so that we can view the Spark Jobs UI at http://localhost:4040
 		Scanner scanner = new Scanner(System.in);
