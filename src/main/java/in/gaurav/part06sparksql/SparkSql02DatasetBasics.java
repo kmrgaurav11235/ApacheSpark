@@ -12,11 +12,11 @@ public class SparkSql02DatasetBasics {
 
         SparkSession spark = SparkSession.builder()
                 .appName("testingSql").master("local[*]")
-                // .config("spark.sql.warehouse.dir", "file:///c:/tmp/") // Only for windows -- directory to store temporary files
+                // .config("spark.sql.warehouse.dir", "file:///c:/tmp/")
                 .getOrCreate();
 
         final Dataset<Row> dataset = spark.read()
-                .option("header", true) // Informs Spark that the CSV file has a header
+                .option("header", true)
                 .csv("src/main/resources/exams/students.csv");
 
         final Row firstRow = dataset.first();
