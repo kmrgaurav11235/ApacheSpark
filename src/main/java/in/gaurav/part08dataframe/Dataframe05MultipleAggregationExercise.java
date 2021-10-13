@@ -6,8 +6,10 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
-import static org.apache.spark.sql.functions.max;
-import static org.apache.spark.sql.functions.min;
+import static org.apache.spark.sql.functions.avg;
+import static org.apache.spark.sql.functions.col;
+import static org.apache.spark.sql.functions.round;
+import static org.apache.spark.sql.functions.stddev;
 
 public class Dataframe05MultipleAggregationExercise {
     public static void main(String[] args) {
@@ -30,6 +32,14 @@ public class Dataframe05MultipleAggregationExercise {
             b) The standard deviation of scores.
         (All to 2 decimal places)
          */
+        dataset = dataset.groupBy("subject")
+                .pivot("year")
+                .agg(
+                        round(avg("score"), 2).alias("average"),
+                        round(stddev("score"), 2).alias("std_dev")
+                );
+
+        dataset.show();
 
         spark.close();
     }
