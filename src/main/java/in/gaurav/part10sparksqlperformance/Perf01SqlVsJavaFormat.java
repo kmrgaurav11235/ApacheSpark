@@ -47,9 +47,14 @@ public class Perf01SqlVsJavaFormat {
         dataset = dataset.drop("month_num");
         dataset.show(100);
 
+        // Prints the Execution plan to the console
+        dataset.explain();
+
         // This part will wait for user input so that we can view the Spark Jobs UI at http://localhost:4040
+        /*
         Scanner scanner = new Scanner(System.in);
         scanner.nextLine();
+         */
 
         spark.close();
     }
