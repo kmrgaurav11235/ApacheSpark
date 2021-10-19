@@ -56,6 +56,19 @@ public class Perf01SqlVsJavaFormat {
         scanner.nextLine();
          */
 
+        /*
+        Sort Aggregation vs Hash Aggregation
+        * From the console output, we see that the main difference between Spark SQL format and Spark Java format is
+            that the former uses Sort Aggregation while the latter uses Hash Aggregation.
+        * Sort Aggregation will sort the rows and gather together the matching rows.
+        * Cons: Performance = O(n * log n).
+        * Pros: Sorts are memory efficient; they can be done in place.
+        * Hash Aggregation uses a process similar to Hashing and updates the "value" (in kvp) when a new entry with the
+            same key arrives.
+        * Pros: Performance = O(n)
+        * Cons: Extra space.
+        */
+
         spark.close();
     }
 }
